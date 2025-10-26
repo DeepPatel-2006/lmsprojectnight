@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | MyLMS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='signup.css') }}">
+</head>
+<body>
+  <div class="signup-container">
+    <div class="signup-card">
+      <h1>Create Account</h1>
+      <p class="subtitle">Join the learning community</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form action="/signup" method="post">
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Choose a username" required>
+        </div>
+
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter a password" required>
+        </div>
+
+        <div class="input-group">
+          <label for="account_type">Account Type</label>
+          <select id="account_type" name="account_type" required>
+            <option value="">Select role</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+        </div>
+
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <p class="login-text">
+        Already have an account?
+        <a href="/login">Log in</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ cls.name }} - Manage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+
+<div class="max-w-6xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+
+  <!-- Class Header -->
+  <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl shadow-2xl p-8 mb-10">
+    <div class="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+    <div class="relative z-10">
+      <h2 class="text-4xl font-bold text-white mb-2">{{ cls.name }}</h2>
+      <p class="text-blue-100 text-sm mb-6">
+        Class Code: <span class="font-semibold bg-white/20 px-3 py-1 rounded-full">{{ cls.code }}</span>
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="{{ url_for('create_assignment', class_id=cls.id) }}" 
+           class="group inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-blue-600 text-sm font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          <span>Create Assignment</span>
+        </a>
+      </div>
+    </div>
+    <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- File Upload / Resources Section -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+      <span>📂</span> Class Files
+    </h3>
+
+    <!-- Upload Form (Teachers only) -->
+    {% if session.role == 'teacher' %}
+    <form action="{{ url_for('upload_file', class_id=cls.id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-6">
+      <input type="file" name="file" class="border border-gray-300 dark:border-gray-600 rounded-lg p-2 w-full sm:w-auto" required>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-200">
+        Upload
+      </button>
+    </form>
+    {% endif %}
+
+    <!-- List Uploaded Files -->
+    {% if uploaded_files %}
+    <ul class="space-y-2">
+      {% for f in uploaded_files %}
+      <li class="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-200">
+        <span class="text-gray-800 dark:text-gray-100 font-medium truncate">{{ f }}</span>
+        <a href="{{ url_for('uploaded_file', filename=f) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-bold">
+          Download
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-gray-500 dark:text-gray-400 font-medium">No files uploaded yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+    <!-- Assignments Section -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-700 px-6 py-5 border-b border-gray-200 dark:border-gray-600">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+          <span class="text-2xl">📝</span>
+          <span>Assignments</span>
+          {% if assignments %}
+            <span class="ml-auto text-sm font-semibold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full">
+              {{ assignments|length }}
+            </span>
+          {% endif %}
+        </h3>
+      </div>
+      
+      <div class="p-6">
+        {% if assignments %}
+          <ul class="space-y-3">
+            {% for a in assignments %}
+              <li class="group flex justify-between items-center bg-gradient-to-r from-gray-50 to-gray-50 dark:from-gray-700 dark:to-gray-700 hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-600 dark:hover:to-gray-600 rounded-xl p-4 border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-200 hover:shadow-md">
+                <span class="font-semibold text-gray-800 dark:text-gray-100">{{ a.title }}</span>
+                <a href="{{ url_for('view_submissions', assignment_id=a.id) }}" 
+                   class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-bold group-hover:translate-x-1 transition-transform">
+                  <span>View Submissions</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 font-medium">No assignments yet</p>
+            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Create your first assignment to get started</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Students Section -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-700 px-6 py-5 border-b border-gray-200 dark:border-gray-600">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+          <span class="text-2xl">👩‍🎓</span>
+          <span>Students</span>
+          {% if students %}
+            <span class="ml-auto text-sm font-semibold bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full">
+              {{ students|length }}
+            </span>
+          {% endif %}
+        </h3>
+      </div>
+      
+      <div class="p-6">
+        {% if students %}
+          <ul class="space-y-2">
+            {% for s in students %}
+              <li class="flex items-center gap-3 py-3 px-4 bg-gray-50 dark:bg-gray-700 hover:bg-purple-50 dark:hover:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500 transition-all duration-200">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm">
+                  {{ s.username[0].upper() }}
+                </div>
+                <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ s.username }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 font-medium">No students enrolled yet</p>
+            <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Students can join using the class code</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

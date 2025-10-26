@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit - {{ assignment.title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+
+<div class="max-w-4xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 pb-12">
+  
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-3">
+      <a href="javascript:history.back()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+      </a>
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Submit Assignment</h2>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ assignment.title }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+    
+    <!-- Decorative Header Bar -->
+    <div class="h-2 bg-gradient-to-r from-green-500 via-teal-500 to-blue-500"></div>
+
+    <!-- ====== GRADE / FEEDBACK CARD ====== -->
+    {% if submission and submission.grade is not none %}
+    <div class="p-4 m-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
+        <h3 class="text-lg font-semibold text-yellow-800 dark:text-yellow-200">Your Grade</h3>
+        <p class="text-2xl font-bold text-yellow-900 dark:text-yellow-100">{{ submission.grade }}/{{ assignment.points }}</p>
+        {% if submission.feedback %}
+        <p class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">Feedback: {{ submission.feedback }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+    <!-- ====== END GRADE CARD ====== -->
+
+    <form method="post" enctype="multipart/form-data" class="p-8 space-y-8">
+      
+      <!-- File Upload Section -->
+      <div>
+        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">
+          Upload File
+        </label>
+        <div class="relative">
+          <input 
+            type="file" 
+            name="file" 
+            id="file-upload"
+            class="hidden"
+          >
+          <label 
+            for="file-upload"
+            class="flex flex-col items-center justify-center w-full h-48 bg-gray-50 dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl hover:border-green-400 dark:hover:border-green-600 hover:bg-green-50 dark:hover:bg-green-900/10 transition-all cursor-pointer group"
+          >
+            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg class="w-12 h-12 mb-4 text-gray-400 group-hover:text-green-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              </svg>
+              <p class="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-green-600 dark:group-hover:text-green-400">
+                Click to upload or drag and drop
+              </p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                PDF, DOC, DOCX, TXT, or any file type
+              </p>
+            </div>
+          </label>
+        </div>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Maximum file size: 10MB</p>
+      </div>
+
+      <!-- Divider -->
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">OR</span>
+        </div>
+      </div>
+
+      <!-- Text Submission Section -->
+      <div>
+        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">
+          Paste or Type Your Submission
+        </label>
+        <textarea 
+          name="text" 
+          rows="10"
+          placeholder="Enter your answer, code, or any text-based submission here..."
+          class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all outline-none resize-none font-mono text-sm"
+        ></textarea>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">You can submit either a file or text, or both</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 pt-4">
+        <button 
+          type="submit"
+          class="flex-1 group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white text-base font-bold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Submit Assignment</span>
+        </button>
+        
+        <a 
+          href="javascript:history.back()"
+          class="inline-flex items-center justify-center px-6 py-3.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl transition-all duration-200 text-center"
+        >
+          Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    
+    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+      <div class="flex gap-3">
+        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <p class="text-sm text-blue-900 dark:text-blue-200 font-bold mb-1">Multiple Submissions</p>
+          <p class="text-xs text-blue-800 dark:text-blue-300">You can submit both a file and text if needed</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
+      <div class="flex gap-3">
+        <svg class="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+        <div>
+          <p class="text-sm text-green-900 dark:text-green-200 font-bold mb-1">Secure Upload</p>
+          <p class="text-xs text-green-800 dark:text-green-300">Your submission is saved securely</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Show file name when selected
+  document.getElementById('file-upload').addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name;
+    if (fileName) {
+      const label = document.querySelector('label[for="file-upload"]');
+      label.innerHTML = `
+        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+          <svg class="w-12 h-12 mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="mb-2 text-sm font-semibold text-green-600 dark:text-green-400">
+            ${fileName}
+          </p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">
+            Click to change file
+          </p>
+        </div>
+      `;
+    }
+  });
+</script>
+
+</body>
+</html>
+{% endblock %}
